@@ -53,6 +53,9 @@ public class SnowmanGameModel {
 				guesses--;
 			}
 		}
+		if (guesses < 0){
+			StdOut.println("YOU LOSE! The word was: " + dictionary.get(0));
+		}
 	}
 
 	public void turn() {
