@@ -5,11 +5,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SnowmanGameModel {
-	private int length;
-	private int guesses;
+	public int length;
+	public int guesses;
 	private String guessedWord = "";
 	private int noDuplicateLetters =0;
-	private ArrayList<String> dictionary = new ArrayList<String>();
+	public ArrayList<String> dictionary = new ArrayList<String>();
 	private ArrayList<Character> guessedLetters = new ArrayList<Character>();
 
 	/**
