@@ -8,6 +8,7 @@ public class SnowmanGameModel {
 	private int length;
 	private int guesses;
 	private String guessedWord = "";
+	private int noDuplicateLetters =0;
 	private ArrayList<String> dictionary = new ArrayList<String>();
 	private ArrayList<Character> guessedLetters = new ArrayList<Character>();
 
@@ -23,49 +24,62 @@ public class SnowmanGameModel {
 			if (length > 0 && length < 100) {
 				remain = true;
 				for (int i = 0; i < length; i++) {
-					guessedWord+="_";
+					guessedWord += "_";
 				}
 			}
 		}
 		while (remain) {
 			StdOut.println("Please enter the number of guesses you want");
-			guesses = StdIn.readInt() + 1;
+			guesses = StdIn.readInt();
 			if (guesses > 0 && length < 27) {
 				remain = false;
 			}
 		}
 		initializeGameDictionary();
-//		for (String word : dictionary) {
-//			StdOut.println(word);
-//		}
+		run();
+	}
 
-		while (guesses >= 0) {
-			if (guessedWord.equals(dictionary.get(0))){
+	// for (String word : dictionary) {
+	// StdOut.println(word);
+	// }
+	public void run() {
+		while (guesses > 0) {
+			if (guessedWord.equals(dictionary.get(0))) {
 				StdOut.println(guessedWord);
 				StdOut.println("YOU WIN!");
 				break;
 			}
-			StdOut.println("Please enter your guess!");
+			StdOut.println("Guessed Letters: "+guessedLetters.toString());
+			StdOut.println("Please enter your guess! You have " + guesses + " guesses left.");
 			StdOut.println(guessedWord);
 			turn();
-			if (guessedLetters.size() > 0) {
+			if (guessedLetters.size() > noDuplicateLetters) {
 				updateGameDict();
 				guesses--;
+				noDuplicateLetters++;
+			}
+			else{
+				StdOut.println("Please enter a new letter");
 			}
 		}
-		if (guesses < 0){
-			StdOut.println("YOU LOSE! The word was: " + dictionary.get(0));
+		if (guesses == 0) {
+			int k = (int)(Math.random()*dictionary.size());
+			StdOut.println("YOU LOSE! The word was: " + dictionary.get(k));
 		}
 	}
 
 	public void turn() {
-		if (!StdIn.isEmpty() && StdIn.readChar()!='\r') {
+		if (!StdIn.isEmpty() && StdIn.readChar() != '\r') {
 			char letter = StdIn.readChar();
+			for (char l: guessedLetters){
+				if(l==letter){
+					return;
+				}
+			}
 			guessedLetters.add(letter);
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public void updateGameDict() {
 		char newLetter = guessedLetters.get(guessedLetters.size() - 1);
 		String pseudoHashCode = "";
@@ -92,22 +106,23 @@ public class SnowmanGameModel {
 		}
 		int longestEntry = 0;
 		String longestEntryKey = "";
-		for (@SuppressWarnings("rawtypes") Map.Entry m : map.entrySet()) {
-			if(((ArrayList<String>) m.getValue()).size()>longestEntry){
-				longestEntry = ((ArrayList<String>) m.getValue()).size();
-				longestEntryKey = (String) m.getKey();
+		for (Map.Entry<String,ArrayList<String>> m : map.entrySet()) {
+			if (m.getValue().size() > longestEntry) {
+				longestEntry = m.getValue().size();
+				longestEntryKey = m.getKey();
 			}
 		}
 		dictionary.clear();
-		for (String word: map.get(longestEntryKey)){
+		for (String word : map.get(longestEntryKey)) {
 			dictionary.add(word);
 			StdOut.println(word);
 		}
-		
-		for(int i=0; i<longestEntryKey.toCharArray().length;i++){
+
+		for (int i = 0; i < longestEntryKey.toCharArray().length; i++) {
 			char binaryNum = longestEntryKey.toCharArray()[i];
-			if(binaryNum == '1'){
-				guessedWord = guessedWord.substring(0,i)+newLetter+guessedWord.substring(i+1);
+			if (binaryNum == '1') {
+				guessedWord = guessedWord.substring(0, i) + newLetter
+						+ guessedWord.substring(i + 1);
 			}
 		}
 
